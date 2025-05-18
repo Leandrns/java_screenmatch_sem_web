@@ -9,6 +9,9 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @SpringBootApplication
 public class ScreenmatchApplication implements CommandLineRunner {
 
@@ -25,11 +28,13 @@ public class ScreenmatchApplication implements CommandLineRunner {
 		DadosSerie breakingBad = conversor.obterDados(json, DadosSerie.class);
 		System.out.println(breakingBad);
 
+		List<DadosTemporada> listaTemporadas = new ArrayList<>();
 		for (int i = 1; i <= breakingBad.totalSeasons(); i++) {
 			json = consumoAPI.obterDados("https://www.omdbapi.com/?t=breaking+bad&Season=" + i + "&apikey=6fe24967");
 			DadosTemporada temporada = conversor.obterDados(json, DadosTemporada.class);
-			System.out.println(temporada);
+			listaTemporadas.add(temporada);
 		}
+		listaTemporadas.forEach(System.out::println);
 
 
 
