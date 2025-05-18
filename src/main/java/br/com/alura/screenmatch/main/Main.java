@@ -1,5 +1,6 @@
 package br.com.alura.screenmatch.main;
 
+import br.com.alura.screenmatch.model.DadosEpisodio;
 import br.com.alura.screenmatch.model.DadosSerie;
 import br.com.alura.screenmatch.model.DadosTemporada;
 import br.com.alura.screenmatch.service.ConsumoAPI;
@@ -32,5 +33,19 @@ public class Main {
             listaTemporadas.add(temporada);
         }
         listaTemporadas.forEach(System.out::println);
+
+        // for each do Java --- bem parecido com o uso do 'in' em python
+//        for (DadosTemporada temporada : listaTemporadas) {
+//            System.out.println("\nTemporada " + temporada.numTemp());
+//            for (DadosEpisodio episodio : temporada.episodios()) {
+//                System.out.println(episodio.titulo());
+//            }
+//        }
+
+        // função lambda --- semelhante à arrow function do javascript (funções anônimas)
+        listaTemporadas.forEach(t -> {
+            System.out.println("\nTemporada " + t.numTemp());
+            t.episodios().forEach(e -> System.out.println(e.titulo()));
+        });
     }
 }
