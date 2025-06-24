@@ -3,10 +3,12 @@ package br.com.alura.screenmatch.main;
 import br.com.alura.screenmatch.model.DadosEpisodio;
 import br.com.alura.screenmatch.model.DadosSerie;
 import br.com.alura.screenmatch.model.DadosTemporada;
+import br.com.alura.screenmatch.model.Serie;
 import br.com.alura.screenmatch.service.ConsumoAPI;
 import br.com.alura.screenmatch.service.ConverteDados;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Main {
     private Scanner scanner = new Scanner(System.in);
@@ -50,7 +52,18 @@ public class Main {
     }
 
     private void listarSeriesBuscadas() {
-        dadosSeries.forEach(System.out::println);
+        List<Serie> series; // iniciando a variável de vai ser lista de Serie
+
+        // para cada DadosSerie na lista dadosSeries, é instanciado um objeto de Serie
+        // ao fim da stream, tudo é coletado em uma lista
+        series = dadosSeries.stream()
+                        .map(d -> new Serie(d))
+                                .collect(Collectors.toList());
+
+        // ordenando as séries por Genre (gênero) e exibindo na tela
+        series.stream()
+                .sorted(Comparator.comparing(Serie::getGenre))
+                .forEach(System.out::println);
     }
 
     private void buscarSerieWeb() {
