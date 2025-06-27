@@ -23,6 +23,8 @@ public class Serie {
     @Transient
     private List<Episodio> episodios;
 
+    public Serie() {}
+
     public Serie(DadosSerie dadosSerie) {
         this.title = dadosSerie.title();
         this.totalSeasons = dadosSerie.totalSeasons();

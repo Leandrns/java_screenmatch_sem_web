@@ -58,13 +58,8 @@ public class Main {
     }
 
     private void listarSeriesBuscadas() {
-        List<Serie> series; // iniciando a variável de vai ser lista de Serie
-
-        // para cada DadosSerie na lista dadosSeries, é instanciado um objeto de Serie
-        // ao fim da stream, tudo é coletado em uma lista
-        series = dadosSeries.stream()
-                        .map(d -> new Serie(d))
-                                .collect(Collectors.toList());
+        // buscando todas as séries do banco de dados
+        List<Serie> series = serieRepository.findAll();
 
         // ordenando as séries por Genre (gênero) e exibindo na tela
         series.stream()
