@@ -4,6 +4,7 @@ import br.com.alura.screenmatch.model.DadosEpisodio;
 import br.com.alura.screenmatch.model.DadosSerie;
 import br.com.alura.screenmatch.model.DadosTemporada;
 import br.com.alura.screenmatch.model.Serie;
+import br.com.alura.screenmatch.repository.SerieRepository;
 import br.com.alura.screenmatch.service.ConsumoAPI;
 import br.com.alura.screenmatch.service.ConverteDados;
 
@@ -17,6 +18,11 @@ public class Main {
     private ConsumoAPI consumoAPI = new ConsumoAPI();
     private ConverteDados conversor = new ConverteDados();
     private List<DadosSerie> dadosSeries = new ArrayList<>();
+    private SerieRepository serieRepository;
+
+    public Main(SerieRepository serieRepository) {
+        this.serieRepository = serieRepository;
+    }
 
     public void exibeMenu() {
         var opcao = -1;
@@ -68,7 +74,9 @@ public class Main {
 
     private void buscarSerieWeb() {
         DadosSerie dados = getDadosSerie();
+        Serie serie = new Serie(dados);
         dadosSeries.add(dados);
+        serieRepository.save(serie);
         System.out.println(dados);
     }
 
