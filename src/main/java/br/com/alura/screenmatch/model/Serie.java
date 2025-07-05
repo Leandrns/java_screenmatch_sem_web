@@ -14,12 +14,16 @@ public class Serie {
     @Column(unique = true)
     private String title;
     private Integer totalSeasons;
-    private Double imbdRating;
+    private Double imdbRating;
     @Enumerated(EnumType.STRING)
     private Categoria genre;
     private String actors;
     private String sinopse;
     private String poster;
+
+    // Relação um para muitos: mapeado para a coluna serie de Episodio, ou seja, surge uma chave estrangeira de Serie na tabela Episodio
+    // CascadeType.ALL significa que todas as operações (persist, merge, remove, refresh, detach) serão propagadas para Episodio
+    // FetchType.EAGER significa que os episódios serão carregados junto com a série, ou seja, quando uma série for buscada, seus episódios também serão carregados
     @OneToMany(mappedBy = "serie", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Episodio> episodios;
 
@@ -28,7 +32,7 @@ public class Serie {
     public Serie(DadosSerie dadosSerie) {
         this.title = dadosSerie.title();
         this.totalSeasons = dadosSerie.totalSeasons();
-        this.imbdRating = OptionalDouble.of(Double.parseDouble(dadosSerie.imbdRating())).orElse(0);
+        this.imdbRating = OptionalDouble.of(Double.parseDouble(dadosSerie.imbdRating())).orElse(0);
         this.genre = Categoria.fromString(dadosSerie.genre().split(",")[0].trim());
         this.actors = dadosSerie.actors();
         this.poster = dadosSerie.poster();
@@ -59,12 +63,12 @@ public class Serie {
         this.totalSeasons = totalSeasons;
     }
 
-    public Double getImbdRating() {
-        return imbdRating;
+    public Double getImdbRating() {
+        return imdbRating;
     }
 
-    public void setImbdRating(Double imbdRating) {
-        this.imbdRating = imbdRating;
+    public void setImdbRating(Double imdbRating) {
+        this.imdbRating = imdbRating;
     }
 
     public Categoria getGenre() {
@@ -104,6 +108,7 @@ public class Serie {
     }
 
     public void setEpisodios(List<Episodio> episodios) {
+        // Episodio possui um atributo Serie, então é necessário setar a série em cada episódio, para que haja a relação bidirecional e o banco possa entender qual é a chave estrangeira
         episodios.forEach(e -> e.setSerie(this));
         this.episodios = episodios;
     }
@@ -113,7 +118,7 @@ public class Serie {
         return "genre=" + genre +
                 ", title='" + title + '\'' +
                 ", totalSeasons=" + totalSeasons +
-                ", imbdRating=" + imbdRating +
+                ", imbdRating=" + imdbRating +
                 ", actors='" + actors + '\'' +
                 ", sinopse='" + sinopse + '\'' +
                 ", poster='" + poster + '\'' +

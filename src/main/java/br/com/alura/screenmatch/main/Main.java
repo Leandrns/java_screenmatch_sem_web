@@ -28,6 +28,12 @@ public class Main {
                 1 - Buscar séries
                 2 - Buscar episódios
                 3 - Listar séries buscadas
+                4 - Buscar série por título
+                5 - Buscar séries por ator
+                6 - Top 5 séries
+                7 - Buscar séries por categoria
+                8 - Buscar séries por quatidade máxima de temporadas
+                
                 0 - Sair
                 """;
 
@@ -44,6 +50,21 @@ public class Main {
                     break;
                 case 3:
                     listarSeriesBuscadas();
+                    break;
+                case 4:
+                    buscarSeriePorTitulo();
+                    break;
+                case 5:
+                    buscarSeriesPorAtor();
+                    break;
+                case 6:
+                    buscarTop5Series();
+                    break;
+                case 7:
+                    buscarSeriesPorCategoria();
+                    break;
+                case 8:
+                    buscarSeriesPorQuantidadeMaxTemporadas();
                     break;
                 case 0:
                     System.out.println("Saindo...");
@@ -83,9 +104,7 @@ public class Main {
         System.out.println("Escolha uma série pelo nome: ");
         var nomeSerie = scanner.nextLine();
 
-        Optional<Serie> serie = series.stream()
-                .filter(s -> s.getTitle().toLowerCase().contains(nomeSerie.toLowerCase()))
-                .findFirst();
+        Optional<Serie> serie = serieRepository.findByTitleContainingIgnoreCase(nomeSerie);
 
         if (serie.isPresent()) {
             var serieEncontrada = serie.get();
@@ -108,5 +127,55 @@ public class Main {
             System.out.println("Série não encontrada.");
         }
 
+    }
+
+    private void buscarSeriePorTitulo() {
+        System.out.println("Escolha uma série pelo nome: ");
+        var nomeSerie = scanner.nextLine();
+
+        Optional<Serie> serieBuscada = serieRepository.findByTitleContainingIgnoreCase(nomeSerie);
+
+        if (serieBuscada.isPresent()) {
+            System.out.println("Série encontrada!\nVeja os dados:" + serieBuscada.get());
+        } else {
+            System.out.println("Nenhuma série encontrada.");
+        }
+    }
+
+    private void buscarSeriesPorAtor() {
+        System.out.println("Digite o nome para busca:");
+        var nomeAtor = scanner.nextLine();
+        System.out.println("Digite a avaliação mínima da série:");
+        var avaliacao = scanner.nextDouble();
+
+        List<Serie> seriesEncontradas = serieRepository.findByActorsContainingIgnoreCaseAndImdbRatingGreaterThanEqual(nomeAtor, avaliacao);
+
+        System.out.println("Séries encontradas:");
+        seriesEncontradas.forEach(System.out::println);
+    }
+
+    private void buscarTop5Series() {
+        List<Serie> serieTop = serieRepository.findTop5ByOrderByImdbRatingDesc();
+        serieTop.forEach(s -> System.out.println(s.getTitle() + " - " + "Avaliação: " + s.getImdbRating()));
+    }
+
+    private void buscarSeriesPorCategoria() {
+        System.out.println("Digite a categoria/gênero que está buscando:");
+        var nomeCategoria = scanner.nextLine();
+        Categoria categoria = Categoria.fromPortugues(nomeCategoria);
+        List<Serie> seriesEncontradas = serieRepository.findByGenre(categoria);
+        System.out.println("Séries de " + nomeCategoria + " encontradas:");
+        seriesEncontradas.forEach(System.out::println);
+    }
+
+    private void buscarSeriesPorQuantidadeMaxTemporadas() {
+        System.out.println("Digite um número máximo de temporadas:");
+        var maximoTemporadas = scanner.nextInt();
+        System.out.println("Digite uma avaliação mínima:");
+        var minAvaliacao = scanner.nextDouble();
+        List<Serie> seriesEncontradas = serieRepository.findByTotalSeasonsLessThanEqualAndImdbRatingGreaterThanEqual(maximoTemporadas, minAvaliacao);
+
+        System.out.println("Séries encontradas:");
+        seriesEncontradas.forEach(System.out::println);
     }
 }
