@@ -33,6 +33,7 @@ public class Main {
                 6 - Top 5 séries
                 7 - Buscar séries por categoria
                 8 - Buscar séries por quatidade máxima de temporadas
+                9 - Buscar episódios por trecho
                 
                 0 - Sair
                 """;
@@ -65,6 +66,9 @@ public class Main {
                     break;
                 case 8:
                     buscarSeriesPorQuantidadeMaxTemporadas();
+                    break;
+                case 9:
+                    buscarEpisodioPorTrecho();
                     break;
                 case 0:
                     System.out.println("Saindo...");
@@ -173,9 +177,16 @@ public class Main {
         var maximoTemporadas = scanner.nextInt();
         System.out.println("Digite uma avaliação mínima:");
         var minAvaliacao = scanner.nextDouble();
-        List<Serie> seriesEncontradas = serieRepository.findByTotalSeasonsLessThanEqualAndImdbRatingGreaterThanEqual(maximoTemporadas, minAvaliacao);
+        List<Serie> seriesEncontradas = serieRepository.seriesPorTemporadaEAvaliacao(maximoTemporadas, minAvaliacao);
 
         System.out.println("Séries encontradas:");
         seriesEncontradas.forEach(System.out::println);
+    }
+
+    private void buscarEpisodioPorTrecho() {
+        System.out.println("Digite o nome do episódio para busca:");
+        var trechoEpisodio = scanner.nextLine();
+        List<Episodio> episodiosEcontrados = serieRepository.episodiosPorTrecho(trechoEpisodio);
+        episodiosEcontrados.forEach(e -> System.out.printf("Série: %s  Temporada %d - Episódio: %s\n", e.getSerie().getTitle(), e.getTemporada(), e.getTitulo()));
     }
 }
