@@ -16,6 +16,7 @@ public class Main {
     private ConverteDados conversor = new ConverteDados();
     private SerieRepository serieRepository;
     private List<Serie> series = new ArrayList<>();
+    private Optional<Serie> serieBuscada;
 
     public Main(SerieRepository serieRepository) {
         this.serieRepository = serieRepository;
@@ -34,6 +35,7 @@ public class Main {
                 7 - Buscar séries por categoria
                 8 - Buscar séries por quatidade máxima de temporadas
                 9 - Buscar episódios por trecho
+                10 - Top 5 episódios por série
                 
                 0 - Sair
                 """;
@@ -69,6 +71,9 @@ public class Main {
                     break;
                 case 9:
                     buscarEpisodioPorTrecho();
+                    break;
+                case 10:
+                    topEpisodiosPorSerie();
                     break;
                 case 0:
                     System.out.println("Saindo...");
@@ -137,7 +142,7 @@ public class Main {
         System.out.println("Escolha uma série pelo nome: ");
         var nomeSerie = scanner.nextLine();
 
-        Optional<Serie> serieBuscada = serieRepository.findByTitleContainingIgnoreCase(nomeSerie);
+        serieBuscada = serieRepository.findByTitleContainingIgnoreCase(nomeSerie);
 
         if (serieBuscada.isPresent()) {
             System.out.println("Série encontrada!\nVeja os dados:" + serieBuscada.get());
@@ -188,5 +193,15 @@ public class Main {
         var trechoEpisodio = scanner.nextLine();
         List<Episodio> episodiosEcontrados = serieRepository.episodiosPorTrecho(trechoEpisodio);
         episodiosEcontrados.forEach(e -> System.out.printf("Série: %s  Temporada %d - Episódio: %s\n", e.getSerie().getTitle(), e.getTemporada(), e.getTitulo()));
+    }
+
+    private void topEpisodiosPorSerie() {
+        buscarSeriePorTitulo();
+        if (serieBuscada.isPresent()) {
+            Serie serie = serieBuscada.get();
+            List<Episodio> topEpisodios = serieRepository.topEpisodiosPorSerie(serie);
+            System.out.println("Top 5 episódios de " + serie.getTitle());
+            topEpisodios.forEach(e -> System.out.printf("Temporada %d - Episódio: %s   Avaliação: %.1f\n", e.getTemporada(), e.getTitulo(), e.getAvaliacao()));
+        }
     }
 }
