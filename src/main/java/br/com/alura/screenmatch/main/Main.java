@@ -36,6 +36,7 @@ public class Main {
                 8 - Buscar séries por quatidade máxima de temporadas
                 9 - Buscar episódios por trecho
                 10 - Top 5 episódios por série
+                11 - Buscar episódios a partir de uma data
                 
                 0 - Sair
                 """;
@@ -74,6 +75,9 @@ public class Main {
                     break;
                 case 10:
                     topEpisodiosPorSerie();
+                    break;
+                case 11:
+                    buscarEpisodiosDepoisDeData();
                     break;
                 case 0:
                     System.out.println("Saindo...");
@@ -191,8 +195,8 @@ public class Main {
     private void buscarEpisodioPorTrecho() {
         System.out.println("Digite o nome do episódio para busca:");
         var trechoEpisodio = scanner.nextLine();
-        List<Episodio> episodiosEcontrados = serieRepository.episodiosPorTrecho(trechoEpisodio);
-        episodiosEcontrados.forEach(e -> System.out.printf("Série: %s  Temporada %d - Episódio: %s\n", e.getSerie().getTitle(), e.getTemporada(), e.getTitulo()));
+        List<Episodio> episodiosEncontrados = serieRepository.episodiosPorTrecho(trechoEpisodio);
+        episodiosEncontrados.forEach(e -> System.out.printf("Série: %s  Temporada %d - Episódio: %s\n", e.getSerie().getTitle(), e.getTemporada(), e.getTitulo()));
     }
 
     private void topEpisodiosPorSerie() {
@@ -202,6 +206,20 @@ public class Main {
             List<Episodio> topEpisodios = serieRepository.topEpisodiosPorSerie(serie);
             System.out.println("Top 5 episódios de " + serie.getTitle());
             topEpisodios.forEach(e -> System.out.printf("Temporada %d - Episódio: %s   Avaliação: %.1f\n", e.getTemporada(), e.getTitulo(), e.getAvaliacao()));
+        }
+    }
+
+    private void buscarEpisodiosDepoisDeData() {
+        buscarSeriePorTitulo();
+        if (serieBuscada.isPresent()) {
+            Serie serie = serieBuscada.get();
+            System.out.println("Digite o ano mínimo de lançamento:");
+            var anoLancamento = scanner.nextInt();
+            scanner.nextLine();
+
+            List<Episodio> episodiosAno = serieRepository.episodiosPorSerieEAno(serie, anoLancamento);
+            System.out.println("Episódios de " + serie.getTitle() + " a partir de " + anoLancamento);
+            episodiosAno.forEach(e -> System.out.printf("Temporada %d - Episódio: %s   Data de lançamento: %s\n", e.getTemporada(), e.getTitulo(), e.getDataLancamento()));
         }
     }
 }
